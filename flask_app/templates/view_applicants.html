@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Applicants</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Applicants for {{ job.job_title }}</h1>
+    <ul>
+      {% for applicant in applicants %}
+      <li>
+        {{ applicant.name }} ({{ applicant.email }}) - Status: {{
+        applicant.status }}
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

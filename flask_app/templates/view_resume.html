@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Details</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Resume for {{ candidate.name }}</h1>
+
+    <h2>Contact Information</h2>
+    <p>Email: {{ candidate.email }}</p>
+    <p>Phone: {{ candidate.phone }}</p>
+
+    <h2>Extracted Resume Content</h2>
+    <pre>{{ resume.content }}</pre>
+  </body>
+</html>

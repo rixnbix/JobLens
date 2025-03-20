@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recruiter Dashboard</title>
+    <!-- Include custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Horizontal Navbar -->
+    <nav class="custom-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="/">JobLens</a>
+        <div class="navbar-nav ms-auto custom-nav-items">
+          <a class="nav-item nav-link" href="{{ url_for('add_job') }}"
+            >Post a New Job</a
+          >
+          <a class="nav-item nav-link" href="#">Dashboard</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+      <h1 class="mb-4">Recruiter Dashboard</h1>
+
+      <!-- Job Listings -->
+      <h2>Your Job Listings</h2>
+      <div class="job-listings">
+        {% for job in jobs %}
+        <div class="job-listing">
+          <h5>{{ job.job_title }}</h5>
+          <a
+            href="{{ url_for('view_applicants', job_id=job.job_id) }}"
+            class="job-listing"
+          >
+            <p>Click to view applicants for this job.</p>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 JobLens. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
