@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Post a Job</title>
+    <title>Apply for Job - {{ job.job_title }}</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
@@ -27,32 +27,53 @@
 
     <!-- Main Content -->
     <div class="container mt-5">
-      <h1 class="mb-4">Post a Job</h1>
-      <form action="{{ url_for('add_job') }}" method="POST" class="job-form">
+      <h1 class="mb-4">Apply for Job - {{ job.job_title }}</h1>
+      <form method="POST" class="job-application-form">
         <div class="form-group">
-          <label for="job_title">Job Title:</label>
-          <input type="text" name="job_title" required class="form-control" />
+          <label for="name">Full Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            class="form-control"
+          />
         </div>
 
         <div class="form-group">
-          <label for="job_description">Job Description:</label>
-          <textarea
-            name="job_description"
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
             required
             class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone:</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            required
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="resume_content">Resume Content:</label>
+          <textarea
+            id="resume_content"
+            name="resume_content"
+            rows="10"
+            class="form-control"
+            required
           ></textarea>
         </div>
 
-        <div class="form-group">
-          <label for="requirements">Requirements:</label>
-          <textarea
-            name="requirements"
-            required
-            class="form-control"
-          ></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Add Job</button>
+        <button type="submit" class="btn btn-primary">Apply</button>
       </form>
     </div>
 

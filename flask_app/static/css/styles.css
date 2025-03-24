@@ -77,6 +77,32 @@ h2 {
   padding: 10px 0;
 }
 
+/* Apply Button Styling */
+button.btn-primary {
+  background-color: #3498db; /* Primary blue color */
+  color: white; /* White text */
+  font-family: "Roboto", sans-serif; /* Consistent font */
+  font-weight: 500; /* Slightly bold text */
+  padding: 10px 20px; /* Adequate padding for button */
+  font-size: 1rem; /* Consistent font size */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+/* Hover Effect */
+button.btn-primary:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+  text-decoration: none;
+}
+
+/* Focus Effect (for accessibility) */
+button.btn-primary:focus {
+  outline: 3px solid #2980b9; /* Blue outline for focus */
+  outline-offset: 2px;
+}
+
 .job-listing a:hover {
   background-color: #f1f1f1;
 }

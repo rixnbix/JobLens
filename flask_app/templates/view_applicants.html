@@ -3,21 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>View Applicants</title>
+    <title>View Applicants - {{ job.job_title }}</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
+      href="{{ url_for('static', filename='css/styles.css') }}"
     />
   </head>
   <body>
-    <h1>Applicants for {{ job.job_title }}</h1>
-    <ul>
-      {% for applicant in applicants %}
-      <li>
-        {{ applicant.name }} ({{ applicant.email }}) - Status: {{
-        applicant.status }}
-      </li>
-      {% endfor %}
-    </ul>
+    <!-- Horizontal Navbar -->
+    <nav class="custom-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="/">JobLens</a>
+        <div class="navbar-nav ms-auto custom-nav-items">
+          <a class="nav-item nav-link" href="{{ url_for('add_job') }}"
+            >Post a New Job</a
+          >
+          <a class="nav-item nav-link" href="{{ url_for('index') }}"
+            >Dashboard</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+      <h1 class="mb-4">Applicants for {{ job.job_title }}</h1>
+
+      <!-- Applicants List -->
+      <div class="applicants-list">
+        <ul class="list-group">
+          {% for applicant in applicants %}
+          <li class="list-group-item">
+            <h5>{{ applicant.name }} ({{ applicant.email }})</h5>
+            <p>
+              Status:
+              <span class="applicant-status">{{ applicant.status }}</span>
+            </p>
+            <p><strong>Extracted Keywords:</strong></p>
+            <p class="keywords">
+              {% if applicant.keywords %} {{ applicant.keywords | join(', ') }}
+              {% else %} No keywords extracted. {% endif %}
+            </p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+      <p>&copy; 2025 JobLens CSCI 331 RUNICE.</p>
+    </footer>
   </body>
 </html>

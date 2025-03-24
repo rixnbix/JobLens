@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recruiter Dashboard</title>
+    <title>Job Listings</title>
     <!-- Include custom CSS -->
     <link
       rel="stylesheet"
@@ -31,20 +31,30 @@
 
     <!-- Main Content -->
     <div class="container mt-5">
-      <h1 class="mb-4">Recruiter Dashboard</h1>
+      <h1 class="mb-4">Job Listings</h1>
 
       <!-- Job Listings -->
-      <h2>Your Job Listings</h2>
+      <h2>Available Job Listings</h2>
       <div class="job-listings">
         {% for job in jobs %}
         <div class="job-listing">
           <h5>{{ job.job_title }}</h5>
+          <p><strong>Description:</strong> {{ job.job_description }}</p>
+          <p><strong>Requirements:</strong> {{ job.requirements }}</p>
           <a
             href="{{ url_for('view_applicants', job_id=job.job_id) }}"
             class="job-listing"
           >
             <p>Click to view applicants for this job.</p>
           </a>
+
+          <!-- Apply Button -->
+          <form
+            action="{{ url_for('apply_job', job_id=job.job_id) }}"
+            method="GET"
+          >
+            <button type="submit" class="btn btn-primary">Apply for Job</button>
+          </form>
         </div>
         {% endfor %}
       </div>
@@ -52,7 +62,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <p>&copy; 2025 JobLens. All rights reserved.</p>
+      <p>&copy; 2025 JobLens CSCI 331 RUNICE.</p>
     </footer>
   </body>
 </html>
