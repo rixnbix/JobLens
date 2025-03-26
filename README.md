@@ -23,10 +23,10 @@ A University group project for the Object-Oriented Software Development Course
      `source joblens/bin/activate`
 
 5. **Install the required dependencies:**
-   `pip install -r joblens\requirements.txt`
+   `pip install -r flask_app\requirements.txt`
 
 6. **Run the application:**
-   `python joblens\app.py`
+   `python flask_app\app.py`
 
 ## Entity Relationship Diagram
 
