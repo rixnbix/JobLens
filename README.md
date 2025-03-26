@@ -23,10 +23,10 @@ A University group project for the Object-Oriented Software Development Course
      `source joblens/bin/activate`
 
 5. **Install the required dependencies:**
-   `pip install -r requirements.txt`
+   `pip install -r joblens\requirements.txt`
 
 6. **Run the application:**
-   `python app.py`
+   `python joblens\app.py`
 
 ## Entity Relationship Diagram
 
