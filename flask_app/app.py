@@ -6,6 +6,7 @@ from db_setup import create_tables
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
+from pattern_matcher import PatternMatcher
 nltk.download('punkt')
 nltk.download('punkt_tab')
 nltk.download("stopwords")
@@ -45,19 +46,35 @@ def add_job():
 @app.route('/view_applicants/<int:job_id>')
 def view_applicants(job_id):
     conn = get_db_connection()
-    job = conn.execute('SELECT job_title FROM Job_Listings WHERE job_id = ?', (job_id,)).fetchone()
-    
-    applicants = conn.execute(''' 
-        SELECT Candidates.name, Candidates.email, Applications.status, 
-               GROUP_CONCAT(Keywords.keyword) AS keywords
-        FROM Applications
-        JOIN Candidates ON Applications.candidate_id = Candidates.candidate_id
-        LEFT JOIN Keywords ON Applications.application_id = Keywords.job_id
-        WHERE Applications.job_id = ?
-        GROUP BY Candidates.name, Candidates.email, Applications.status
+    job = conn.execute('SELECT job_title, requirements FROM Job_Listings WHERE job_id = ?', (job_id,)).fetchone()
+
+    rows = conn.execute('''
+        SELECT C.candidate_id, C.name, C.email, A.status, R.content AS resume
+        FROM Applications A
+        JOIN Candidates C ON A.candidate_id = C.candidate_id
+        JOIN Resumes R ON C.candidate_id = R.candidate_id
+        WHERE A.job_id = ?
     ''', (job_id,)).fetchall()
-    
     conn.close()
+
+    # Build a pattern string from the job requirements
+    patterns = re.findall(r"\b[a-zA-Z]{2,}\b", job['requirements'].lower())
+    pm = PatternMatcher(patterns)
+
+    applicants = []
+    for row in rows:
+        matches = pm.search(row['resume'].lower())
+        matched = {kw for _, kw in matches}
+        score = round((len(matched) / len(patterns) * 100), 2) if patterns else 0 # Percentage match
+        applicants.append({
+            'candidate_id': row['candidate_id'],
+            'name': row['name'],
+            'email': row['email'],
+            'status': row['status'],
+            'keywords': sorted(matched),
+            'score': score
+        })
+
     return render_template('view_applicants.html', job=job, applicants=applicants)
 
 @app.route('/apply_job/<int:job_id>', methods=['GET', 'POST'])
@@ -107,44 +124,52 @@ def apply_job(job_id):
 
 
 
-# Function to extract keywords using TF-IDF
-def extract_keywords(text, num_keywords=10):
-    text = re.sub(r"[^a-zA-Z\s]", "", text)
-    words = word_tokenize(text.lower())
-    words = [word for word in words if word not in stopwords.words("english")]
+# # Function to extract keywords using TF-IDF
+# def extract_keywords(text, num_keywords=10):
+#     text = re.sub(r"[^a-zA-Z\s]", "", text)
+#     words = word_tokenize(text.lower())
+#     words = [word for word in words if word not in stopwords.words("english")]
 
-    vectorizer = TfidfVectorizer(stop_words="english", max_features=num_keywords)
-    vectors = vectorizer.fit_transform([" ".join(words)])
-    keywords = vectorizer.get_feature_names_out()
+#     vectorizer = TfidfVectorizer(stop_words="english", max_features=num_keywords)
+#     vectors = vectorizer.fit_transform([" ".join(words)])
+#     keywords = vectorizer.get_feature_names_out()
 
-    return list(keywords)
+#     return list(keywords)
 
-# Function to match resume keywords with job requirements
-def match_keywords(resume_keywords, job_description):
-    job_keywords = extract_keywords(job_description)
-    matched_keywords = set(resume_keywords) & set(job_keywords)  # Find common words
-    match_score = len(matched_keywords) / len(job_keywords) * 100  # Percentage match
-    return matched_keywords, round(match_score, 2)
+# # Function to match resume keywords with job requirements
+# def match_keywords(resume_keywords, job_description):
+#     job_keywords = extract_keywords(job_description)
+#     matched_keywords = set(resume_keywords) & set(job_keywords)  # Find common words
+#     match_score = len(matched_keywords) / len(job_keywords) * 100  # Percentage match
+#     return matched_keywords, round(match_score, 2)
 
-@app.route("/match/<int:job_id>/<int:candidate_id>")
-def match_resume(job_id, candidate_id):
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
+# @app.route("/match/<int:job_id>/<int:candidate_id>")
+# def match_resume(job_id, candidate_id):
+#     conn = get_db_connection()
+#     cursor = conn.cursor()
 
-    # Get resume keywords
-    cursor.execute("SELECT keyword FROM Keywords WHERE job_id=?", (candidate_id,))
-    resume_keywords = [row[0] for row in cursor.fetchall()]
+#     # Get resume content
+#     cursor.execute("SELECT content FROM Resumes WHERE candidate_id=?", (candidate_id,))
+#     resume_content = cursor.fetchone()[0]
 
-    # Get job description
-    cursor.execute("SELECT job_description FROM Job_Listings WHERE job_id=?", (job_id,))
-    job_description = cursor.fetchone()[0]
+#     # Get job requirements
+#     cursor.execute("SELECT requirements FROM Job_Listings WHERE job_id=?", (job_id,))
+#     job_requirements = cursor.fetchone()[0]
 
-    conn.close()
+#     conn.close()
 
-    matched_keywords, score = match_keywords(resume_keywords, job_description)
+#     # Build Aho–Corasick automaton from job requirements
+#     import re
+#     from aho import PatternMatcher
 
-    return render_template("match_result.html", matched_keywords=matched_keywords, score=score)
+#     patterns = re.findall(r"\b[a-zA-Z]{2,}\b", job_requirements.lower())
+#     pm = PatternMatcher(patterns)
+#     matches = pm.search(resume_content.lower())
 
+#     matched_keywords = {pattern for _, pattern in matches}
+#     score = round(len(matched_keywords) / len(patterns) * 100, 2) if patterns else 0
+
+#     return render_template("match_result.html", matched_keywords=matched_keywords, score=score)
 
 @app.route("/submit_resume", methods=["POST"])
 def submit_resume():
