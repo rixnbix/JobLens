@@ -178,6 +178,9 @@ def add_job():
         return redirect(url_for('admin_dashboard'))
     return render_template('add_job.html')
 
+def get_score(applicant):
+    return applicant['score']
+
 @app.route('/view_applicants/<int:job_id>')
 @login_required
 def view_applicants(job_id):
@@ -208,7 +211,12 @@ def view_applicants(job_id):
 
     conn.close()
 
-    patterns = re.findall(r"\b[a-zA-Z]{2,}\b", job['requirements'].lower())
+    #generate two-words phrases before matching
+    # patterns = re.findall(r"\b[a-zA-Z]{2,}\b", job['requirements'].lower())
+    words = nltk.word_tokenize(job['requirements'].lower())
+    phrase = [' '.join(words[i:i+2]) for i in range(len(words) - 1)]
+    patterns = list(set(phrase)) #remove duplicates
+
     pm = PatternMatcher(patterns)
 
     applicants = []
@@ -224,6 +232,9 @@ def view_applicants(job_id):
             'keywords': sorted(matched),
             'score': score
         })
+
+        # Sort applicants so that highest score appears first
+        applicants.sort(key=get_score, reverse=True)
 
     return render_template('view_applicants.html', job=job, applicants=applicants)
 
