@@ -1,5 +1,5 @@
 # CMON 20250303 CSCI 331 db_setup.py
-# create and initalize the database
+# create and initialize the database
 # run once to create database.db
 
 import sqlite3
@@ -10,21 +10,14 @@ def create_tables():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
-    # note: each query here needs its own `cursor.execute()` 
-    # for single-line, a single pair of enclosing double quotation marks is fine
-    # for multi-line, triplets of double quotation marks is required
-
-    # turn on SQLite FK constraints
+    # Enable SQLite FK constraints
     cursor.execute("PRAGMA foreign_keys = ON;")
 
-    # note: SQLite doesn't really support adding/removing constraints after building the db like this
-    # so we gotta be sure our FK/PK and any CHECK constraints (if we end up using them) are in from the get
-    # otherwise, we need to DROP and re-CREATE (so, it's possible to fix this, just a pita)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Employers (
             employer_id INTEGER PRIMARY KEY,
             company_name TEXT NOT NULL,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL
         );
     """)
@@ -44,8 +37,9 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS Candidates (
             candidate_id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            phone TEXT
+            email TEXT NOT NULL UNIQUE,
+            phone TEXT,
+            password TEXT NOT NULL
         );
     """)
 
@@ -80,7 +74,6 @@ def create_tables():
         );
     """)
 
-    # note: SQLite uses `REAL` for floats
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Match_Scores (
             match_id INTEGER PRIMARY KEY,
@@ -93,7 +86,6 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# note: basic command-line test for table existence: `sqlite3 database.db ".tables"`
 if __name__ == "__main__":
     create_tables()
     print("Database initialized. Have a nice day.")

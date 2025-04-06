@@ -39,11 +39,6 @@
               Status:
               <span class="applicant-status">{{ applicant.status }}</span>
             </p>
-            <!-- <p><strong>Extracted Keywords:</strong></p>
-            <p class="keywords">
-              {% if applicant.keywords %} {{ applicant.keywords | join(', ') }}
-              {% else %} No keywords extracted. {% endif %}
-            </p> -->
             <h4>Matched Keywords:</h4>
               {% if applicant.keywords %}
                 {{ applicant.keywords | join(', ') }} 

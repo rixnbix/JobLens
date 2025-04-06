@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Job Listings</title>
+    <title>Employer Dashboard</title>
     <!-- Include custom CSS -->
     <link
       rel="stylesheet"
@@ -21,36 +21,22 @@
       <div class="container">
         <a class="navbar-brand" href="/">JobLens</a>
         <div class="navbar-nav ms-auto custom-nav-items">
-          {% if current_user.is_authenticated %} {% if current_user.role ==
-          'employer' %}
           <a class="nav-item nav-link" href="{{ url_for('add_job') }}"
             >Post a New Job</a
           >
-          <a class="nav-item nav-link" href="{{ url_for('admin_dashboard') }}"
-            >Dashboard</a
+          <a class="nav-item nav-link" href="{{ url_for('index') }}"
+            >View All Jobs</a
           >
-          {% endif %}
           <a class="nav-item nav-link" href="{{ url_for('logout') }}"
             >Logout ({{ current_user.email }})</a
           >
-          {% else %}
-          <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-          <a
-            class="nav-item nav-link"
-            href="{{ url_for('register_candidate') }}"
-            >Register as Candidate</a
-          >
-          <a class="nav-item nav-link" href="{{ url_for('register_employer') }}"
-            >Register as Employer</a
-          >
-          {% endif %}
         </div>
       </div>
     </nav>
 
     <!-- Main Content -->
     <div class="container mt-5">
-      <h1 class="mb-4">Job Listings</h1>
+      <h1 class="mb-4">Employer Dashboard</h1>
 
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
@@ -58,34 +44,25 @@
       <div class="alert alert-info">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
 
-      <!-- Job Listings -->
-      <h2>Available Job Listings</h2>
+      <!-- Employer Job Listings -->
+      <h2>Your Job Listings</h2>
       <div class="job-listings">
-        {% for job in jobs %}
+        {% if jobs %} {% for job in jobs %}
         <div class="job-listing">
           <h5>{{ job.job_title }}</h5>
-          <p><strong>Description:</strong> {{ job.job_description }}</p>
-          <p><strong>Requirements:</strong> {{ job.requirements }}</p>
-          {% if current_user.is_authenticated %} {% if current_user.role ==
-          'employer' and job.employer_id == (current_user.id.split('_')[1] |
-          int) %}
           <a
             href="{{ url_for('view_applicants', job_id=job.job_id) }}"
             class="job-listing"
           >
-            <p>Click to view applicants for this job.</p>
+            <p>View Applicants</p>
           </a>
-          {% elif current_user.role == 'candidate' %}
-          <!-- Apply Button -->
-          <form
-            action="{{ url_for('apply_job', job_id=job.job_id) }}"
-            method="GET"
-          >
-            <button type="submit" class="btn btn-primary">Apply for Job</button>
-          </form>
-          {% endif %} {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %} {% else %}
+        <p>
+          No jobs posted yet.
+          <a href="{{ url_for('add_job') }}">Post a job now!</a>
+        </p>
+        {% endif %}
       </div>
     </div>
 

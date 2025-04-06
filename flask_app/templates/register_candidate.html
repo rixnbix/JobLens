@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apply for Job - {{ job.job_title }}</title>
+    <title>Register as Candidate - JobLens</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
@@ -15,28 +15,17 @@
       <div class="container">
         <a class="navbar-brand" href="/">JobLens</a>
         <div class="navbar-nav ms-auto custom-nav-items">
-          {% if current_user.is_authenticated %}
-          <a class="nav-item nav-link" href="{{ url_for('index') }}"
-            >Job Listings</a
-          >
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}"
-            >Logout ({{ current_user.email }})</a
-          >
-          {% else %}
           <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-          <a
-            class="nav-item nav-link"
-            href="{{ url_for('register_candidate') }}"
-            >Register</a
+          <a class="nav-item nav-link" href="{{ url_for('register_employer') }}"
+            >Register as Employer</a
           >
-          {% endif %}
         </div>
       </div>
     </nav>
 
     <!-- Main Content -->
     <div class="container mt-5">
-      <h1 class="mb-4">Apply for Job - {{ job.job_title }}</h1>
+      <h1 class="mb-4">Register as Candidate</h1>
 
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
@@ -69,27 +58,21 @@
 
         <div class="form-group">
           <label for="phone">Phone:</label>
+          <input type="text" id="phone" name="phone" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
           <input
-            type="text"
-            id="phone"
-            name="phone"
+            type="password"
+            id="password"
+            name="password"
             required
             class="form-control"
           />
         </div>
 
-        <div class="form-group">
-          <label for="resume_content">Resume Content:</label>
-          <textarea
-            id="resume_content"
-            name="resume_content"
-            rows="10"
-            class="form-control"
-            required
-          ></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Apply</button>
+        <button type="submit" class="btn btn-primary">Register</button>
       </form>
     </div>
 
