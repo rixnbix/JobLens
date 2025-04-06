@@ -1,2 +1,13 @@
+# Python-specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
 joblens/
 *.pyc
+
+# Flask-specific
+instance/
+*.sqlite
+database.db
