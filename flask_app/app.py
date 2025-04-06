@@ -3,9 +3,6 @@ import re
 import nltk
 from flask import Flask, request, redirect, render_template
 from db_setup import create_tables
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from sklearn.feature_extraction.text import TfidfVectorizer
 from pattern_matcher import PatternMatcher
 nltk.download('punkt')
 nltk.download('punkt_tab')
@@ -121,55 +118,6 @@ def apply_job(job_id):
     conn.close()
 
     return render_template('apply_job.html', job=job, job_id=job_id)
-
-
-
-# # Function to extract keywords using TF-IDF
-# def extract_keywords(text, num_keywords=10):
-#     text = re.sub(r"[^a-zA-Z\s]", "", text)
-#     words = word_tokenize(text.lower())
-#     words = [word for word in words if word not in stopwords.words("english")]
-
-#     vectorizer = TfidfVectorizer(stop_words="english", max_features=num_keywords)
-#     vectors = vectorizer.fit_transform([" ".join(words)])
-#     keywords = vectorizer.get_feature_names_out()
-
-#     return list(keywords)
-
-# # Function to match resume keywords with job requirements
-# def match_keywords(resume_keywords, job_description):
-#     job_keywords = extract_keywords(job_description)
-#     matched_keywords = set(resume_keywords) & set(job_keywords)  # Find common words
-#     match_score = len(matched_keywords) / len(job_keywords) * 100  # Percentage match
-#     return matched_keywords, round(match_score, 2)
-
-# @app.route("/match/<int:job_id>/<int:candidate_id>")
-# def match_resume(job_id, candidate_id):
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-
-#     # Get resume content
-#     cursor.execute("SELECT content FROM Resumes WHERE candidate_id=?", (candidate_id,))
-#     resume_content = cursor.fetchone()[0]
-
-#     # Get job requirements
-#     cursor.execute("SELECT requirements FROM Job_Listings WHERE job_id=?", (job_id,))
-#     job_requirements = cursor.fetchone()[0]
-
-#     conn.close()
-
-#     # Build Aho–Corasick automaton from job requirements
-#     import re
-#     from aho import PatternMatcher
-
-#     patterns = re.findall(r"\b[a-zA-Z]{2,}\b", job_requirements.lower())
-#     pm = PatternMatcher(patterns)
-#     matches = pm.search(resume_content.lower())
-
-#     matched_keywords = {pattern for _, pattern in matches}
-#     score = round(len(matched_keywords) / len(patterns) * 100, 2) if patterns else 0
-
-#     return render_template("match_result.html", matched_keywords=matched_keywords, score=score)
 
 @app.route("/submit_resume", methods=["POST"])
 def submit_resume():
